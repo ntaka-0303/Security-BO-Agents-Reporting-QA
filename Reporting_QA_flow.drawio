@@ -1,0 +1,113 @@
+<mxfile host="app.diagrams.net" modified="2025-11-17T00:00:00Z" agent="Security-BO-AI" version="20.1.0" type="device">
+  <diagram id="Reporting-QA-Flow-1" name="Reporting QA Agent Flow">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Swimlane: 顧客 -->
+        <mxCell id="lane_customer" value="顧客" style="swimlane;horizontal=0;childLayout=stackLayout;resizeParent=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="220" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Swimlane: コンタクトセンター／営業店 -->
+        <mxCell id="lane_operator" value="コンタクトセンター／営業店" style="swimlane;horizontal=0;childLayout=stackLayout;resizeParent=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="260" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Swimlane: AI エージェント -->
+        <mxCell id="lane_ai" value="AI エージェント" style="swimlane;horizontal=0;childLayout=stackLayout;resizeParent=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="40" width="260" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Swimlane: バックオフィス -->
+        <mxCell id="lane_bo" value="バックオフィス（エスカレーション先）" style="swimlane;horizontal=0;childLayout=stackLayout;resizeParent=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="260" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Swimlane: 帳票システム -->
+        <mxCell id="lane_system" value="帳票システム／基幹システム" style="swimlane;horizontal=0;childLayout=stackLayout;resizeParent=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="40" width="260" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- 顧客側 -->
+        <mxCell id="cust_view" value="帳票を確認" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_customer">
+          <mxGeometry x="20" y="60" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="cust_inquiry" value="問い合わせ実施" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_customer">
+          <mxGeometry x="20" y="140" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- オペレーター側 -->
+        <mxCell id="op_receive" value="問い合わせを受け付け" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="20" y="100" width="200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="op_get_report" value="対象帳票を取得" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="20" y="180" width="200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="op_open_ai" value="AIエージェント画面を起動" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="20" y="260" width="200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="op_review" value="回答案レビュー・編集" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="20" y="340" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="op_decide" value="判断できる？" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="40" y="430" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="op_answer" value="顧客へ回答" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_operator">
+          <mxGeometry x="20" y="520" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- AI エージェント側 -->
+        <mxCell id="ai_input" value="帳票＋質問内容を入力" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane_ai">
+          <mxGeometry x="20" y="120" width="210" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ai_parse" value="帳票解析・&#10;該当箇所特定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane_ai">
+          <mxGeometry x="20" y="220" width="210" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ai_answer" value="回答案＋根拠生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane_ai">
+          <mxGeometry x="20" y="320" width="210" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- バックオフィス側 -->
+        <mxCell id="bo_escalate" value="バックオフィスへエスカレーション" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_bo">
+          <mxGeometry x="20" y="260" width="210" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="bo_investigate" value="詳細調査・回答案作成" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_bo">
+          <mxGeometry x="20" y="350" width="210" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- 帳票システム側 -->
+        <mxCell id="sys_get_report" value="帳票取得（PDF/画面）" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_system">
+          <mxGeometry x="20" y="160" width="210" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- 顧客への最終ノード -->
+        <mxCell id="cust_receive_answer" value="回答受領" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="lane_customer">
+          <mxGeometry x="20" y="520" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="r1" edge="1" parent="1" source="cust_view" target="cust_inquiry" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r2" edge="1" parent="1" source="cust_inquiry" target="op_receive" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r3" edge="1" parent="1" source="op_receive" target="op_get_report" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r4" edge="1" parent="1" source="op_get_report" target="sys_get_report" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r5" edge="1" parent="1" source="sys_get_report" target="op_open_ai" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r6" edge="1" parent="1" source="op_open_ai" target="ai_input" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r7" edge="1" parent="1" source="ai_input" target="ai_parse" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r8" edge="1" parent="1" source="ai_parse" target="ai_answer" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r9" edge="1" parent="1" source="ai_answer" target="op_review" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r10" edge="1" parent="1" source="op_review" target="op_decide" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r11" edge="1" parent="1" source="op_decide" target="op_answer" style="endArrow=block;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" />
+        <mxCell id="r12" edge="1" parent="1" source="op_answer" target="cust_receive_answer" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r13" edge="1" parent="1" source="op_decide" target="bo_escalate" style="endArrow=block;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"/>
+        <mxCell id="r14" edge="1" parent="1" source="bo_escalate" target="bo_investigate" style="endArrow=block;rounded=0;"/>
+        <mxCell id="r15" edge="1" parent="1" source="bo_investigate" target="op_answer" style="endArrow=block;rounded=0;"/>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+
+
+
+

@@ -1,0 +1,16 @@
+# Environment files
+03_Implementation/backend/.env*
+03_Implementation/backend/.venv/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Node modules / build artifacts
+03_Implementation/frontend/node_modules/
+03_Implementation/frontend/.next/
+03_Implementation/frontend/dist/
+
+# Local data outputs
+03_Implementation/backend/data/*.db
+03_Implementation/backend/data/*.sqlite
