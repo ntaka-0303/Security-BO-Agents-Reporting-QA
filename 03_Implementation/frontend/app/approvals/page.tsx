@@ -262,7 +262,7 @@ export default function ApprovalsPage() {
                           <Space direction="vertical" style={{ width: "100%" }}>
                             {distributions.items.map((item) => (
                               <Card key={item.distribution_id} size="small">
-                                <Space align="center" justify="space-between" style={{ width: "100%" }}>
+                                <Flex align="center" justify="space-between" style={{ width: "100%" }}>
                                   <Typography.Text>
                                     {item.channel_type} / {item.distribution_status}
                                   </Typography.Text>
@@ -271,7 +271,7 @@ export default function ApprovalsPage() {
                                       ? new Date(item.sent_at).toLocaleString()
                                       : "未送信"}
                                   </Typography.Text>
-                                </Space>
+                                </Flex>
                                 {item.result_detail && (
                                   <Typography.Text type="secondary">
                                     {item.result_detail}

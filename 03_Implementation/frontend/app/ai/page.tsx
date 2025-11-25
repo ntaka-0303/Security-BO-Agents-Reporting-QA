@@ -128,10 +128,10 @@ export default function AiWorkbenchPage() {
                     }}
                   >
                     <Space direction="vertical" size={4} style={{ width: "100%" }}>
-                      <Space align="center" justify="space-between">
+                      <Flex align="center" justify="space-between">
                         <Typography.Text strong>{notice.security_name}</Typography.Text>
                         <Badge status="processing" text={notice.notice_status} />
-                      </Space>
+                      </Flex>
                       <Typography.Text type="secondary">{notice.ca_event_type}</Typography.Text>
                       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                         CA通知ID: {notice.ca_notice_id}
