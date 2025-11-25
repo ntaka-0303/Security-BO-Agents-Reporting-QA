@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: reporting-qa-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Reporting QA Backend
+      - API_PREFIX=/api
+      - DATABASE_URL=sqlite:///./data/reporting_qa.db
+      - AI_BASE_URL=${AI_BASE_URL:-https://api.openai.com/v1/chat/completions}
+      - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - CONFIDENCE_THRESHOLD_DEFAULT=0.7
+      - CONFIDENCE_THRESHOLD_LOW=0.6
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - reporting-qa-network
+
+  # Frontend Web Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE=http://localhost:8000/api
+    container_name: reporting-qa-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://backend:8000/api
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - reporting-qa-network
+
+volumes:
+  backend-data:
+    driver: local
+
+networks:
+  reporting-qa-network:
+    driver: bridge
