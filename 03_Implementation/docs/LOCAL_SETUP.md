@@ -3,6 +3,58 @@
 CA Summary PoC をローカルで動かすためのセットアップ手順です。  
 （本リポジトリのルートを `${REPO}` と表記します）
 
+---
+
+## Docker を使った実行（推奨）
+
+Docker を使用すると、環境構築が簡単に行えます。
+
+### 前提条件
+
+- Docker Engine 20.10 以上
+- Docker Compose v2.0 以上
+
+### 手順
+
+```bash
+cd "${REPO}/03_Implementation"
+
+# 1. 環境変数ファイルを作成
+cp .env.example .env
+
+# 2. .env ファイルを編集（AI_API_KEY を設定）
+# AI_API_KEY="your-openai-api-key-here"
+
+# 3. Docker コンテナをビルド＆起動
+docker compose up --build -d
+
+# 4. ログを確認（オプション）
+docker compose logs -f
+```
+
+### 停止・削除
+
+```bash
+# コンテナ停止
+docker compose down
+
+# コンテナとボリュームを削除（データも削除）
+docker compose down -v
+```
+
+### アクセス
+
+| サービス | URL |
+| --- | --- |
+| フロントエンド | http://localhost:3000 |
+| バックエンドAPI | http://localhost:8000 |
+| ヘルスチェック | http://localhost:8000/health |
+| API ドキュメント | http://localhost:8000/api/openapi.json |
+
+---
+
+## ローカル環境での実行（Docker を使わない場合）
+
 ## 1. 事前準備
 
 | 種別 | 推奨バージョン | 備考 |
