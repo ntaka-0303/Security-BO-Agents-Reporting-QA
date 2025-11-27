@@ -11,6 +11,7 @@ def create_inquiry(db: Session, payload: InquiryCreate) -> Inquiry:
         question_text=payload.question_text,
         customer_attributes=payload.customer_attributes,
         created_by=payload.created_by,
+        ai_enabled=payload.ai_enabled,
     )
     db.add(inquiry)
     db.commit()

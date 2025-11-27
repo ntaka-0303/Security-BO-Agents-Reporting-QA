@@ -10,6 +10,7 @@ class InquiryCreate(BaseModel):
     question_text: str
     customer_attributes: dict[str, Any] | None = None
     created_by: str = Field(..., max_length=50)
+    ai_enabled: bool = Field(default=True)
 
 
 class InquiryRead(BaseModel):

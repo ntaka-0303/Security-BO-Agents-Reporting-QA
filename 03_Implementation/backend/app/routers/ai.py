@@ -2,10 +2,23 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..dependencies import get_db
-from ..schemas import AiResponseCreate, AiResponseRead, AiResponseReview
+from ..schemas import AiResponseCreate, AiResponseRead, AiResponseReview, AiResponseSummary
 from ..services import ai_service
 
 router = APIRouter()
+
+
+@router.get("/responses", response_model=list[AiResponseSummary])
+def list_responses(db: Session = Depends(get_db)):
+    return ai_service.list_ai_responses(db)
+
+
+@router.get("/responses/{ai_response_id}", response_model=AiResponseRead)
+def fetch_response(ai_response_id: str, db: Session = Depends(get_db)):
+    record = ai_service.get_ai_response(db, ai_response_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="AI response not found")
+    return record
 
 
 @router.post("/responses", response_model=AiResponseRead)
