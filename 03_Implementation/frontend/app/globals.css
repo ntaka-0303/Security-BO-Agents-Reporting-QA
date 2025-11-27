@@ -1,16 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  color-scheme: light;
-  font-family: "Inter", "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #101828;
+  background: #f5f7fb;
 }
 
 body {
   margin: 0;
-  background: #f5f7fb;
   min-height: 100vh;
 }
 
-.app-shell {
-  min-height: 100vh;
-  padding: 32px;
+.card {
+  @apply rounded-xl border border-slate-200 bg-white p-6 shadow-sm;
 }
 
+.badge {
+  @apply inline-flex items-center rounded-full bg-brand-muted px-3 py-1 text-xs font-semibold text-brand;
+}

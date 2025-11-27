@@ -1,58 +1,58 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  # Backend API Service
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: reporting
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: reporting-qa-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/reporting
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./prompts:/app/prompts:ro
+    depends_on:
+      - postgres
+      - redis
     ports:
       - "8000:8000"
-    environment:
-      - APP_NAME=Reporting QA Backend
-      - API_PREFIX=/api
-      - DATABASE_URL=sqlite:///./data/reporting_qa.db
-      - AI_BASE_URL=${AI_BASE_URL:-https://api.openai.com/v1/chat/completions}
-      - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
-      - AI_API_KEY=${AI_API_KEY:-}
-      - CONFIDENCE_THRESHOLD_DEFAULT=0.7
-      - CONFIDENCE_THRESHOLD_LOW=0.6
-    volumes:
-      - backend-data:/app/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-    networks:
-      - reporting-qa-network
 
-  # Frontend Web Service
+  worker:
+    build:
+      context: ./backend
+    command: ["uv", "run", "celery", "-A", "app.workers.celery_app", "worker", "-Q", "reporting_qa"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/reporting
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./prompts:/app/prompts:ro
+    depends_on:
+      - postgres
+      - redis
+
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_API_BASE=http://localhost:8000/api
-    container_name: reporting-qa-frontend
-    ports:
-      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_BASE=http://backend:8000/api
+      NEXT_PUBLIC_API_BASE_URL: http://backend:8000/api
     depends_on:
-      backend:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - reporting-qa-network
+      - backend
+    ports:
+      - "3100:3100"
 
 volumes:
-  backend-data:
-    driver: local
-
-networks:
-  reporting-qa-network:
-    driver: bridge
+  pgdata:

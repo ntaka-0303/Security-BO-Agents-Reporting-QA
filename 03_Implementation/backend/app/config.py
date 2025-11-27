@@ -1,35 +1,37 @@
-from __future__ import annotations
-
 from functools import lru_cache
-from pathlib import Path
-
-from pydantic import Field
+from pydantic import AnyUrl, BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class AiProviderSettings(BaseModel):
+    base_url: str = "https://api.openai.com/v1"
+    model: str = "gpt-4o-mini"
+    temperature: float = 0.2
+
+
+class WorkerSettings(BaseModel):
+    enabled: bool = True
+    default_queue: str = "reporting_qa"
+    pdf_queue: str = "reporting_qa_pdf"
+
+
 class Settings(BaseSettings):
-    """Reporting QA エージェント PoC 向け集中設定。"""
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
-
-    app_name: str = "Reporting QA Backend"
+    app_name: str = "Reporting QA Agent"
     api_prefix: str = "/api"
-    database_url: str = Field(
-        default_factory=lambda: f"sqlite:///{(Path(__file__).resolve().parent.parent / 'data' / 'reporting_qa.db').as_posix()}"
-    )
-    ai_base_url: str = "https://api.openai.com/v1/chat/completions"
-    ai_model: str = "gpt-4o-mini"
-    ai_api_key: str | None = None
-    confidence_threshold_default: float = 0.7
-    confidence_threshold_low: float = 0.6
-    # Risk thresholds
-    risk_threshold_high: int = 70
-    risk_threshold_medium: int = 50
+    database_url: AnyUrl | str = "postgresql+psycopg://postgres:postgres@postgres:5432/reporting"
+    redis_url: AnyUrl | str = "redis://redis:6379/0"
+    vector_store_path: str = "/data/vectorstore"
+    enable_vector_store: bool = True
+
+    ai_provider: AiProviderSettings = AiProviderSettings()
+    worker: WorkerSettings = WorkerSettings()
+
+    danger_words_path: str = "prompts/danger_words.txt"
+    base_prompt_path: str = "prompts/base_prompt.md"
 
 
-@lru_cache(maxsize=1)
+@lru_cache
 def get_settings() -> Settings:
     return Settings()
-
-
-settings = get_settings()

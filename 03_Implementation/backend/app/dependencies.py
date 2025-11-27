@@ -1,12 +1,17 @@
-from __future__ import annotations
+from collections.abc import Generator
 
-from collections.abc import Iterator
+from sqlalchemy.orm import Session
 
-from sqlmodel import Session
+from .config import get_settings
+from .db.session import SessionLocal
 
-from app.db.session import get_session
+
+settings = get_settings()
 
 
-def get_db() -> Iterator[Session]:
-    with get_session() as session:
-        yield session
+def get_db() -> Generator[Session, None, None]:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

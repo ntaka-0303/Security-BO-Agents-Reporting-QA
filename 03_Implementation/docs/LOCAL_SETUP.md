@@ -1,125 +1,33 @@
-# ローカル実行手順
+# Local Setup Guide
 
-CA Summary PoC をローカルで動かすためのセットアップ手順です。  
-（本リポジトリのルートを `${REPO}` と表記します）
+1. **依存のインストール**
+   ```bash
+   cd 03_Implementation/backend
+   uv sync
+   cd ../frontend
+   npm install
+   ```
 
----
+2. **環境変数**
+   - `backend/.env.example` を `.env` にコピーし、DB/Redis/LLM 設定を必要に応じて変更
+   - フロントエンドは `NEXT_PUBLIC_API_BASE_URL` を `.env.local` で指定可能
 
-## Docker を使った実行（推奨）
+3. **開発サーバー起動**
+   ```bash
+   # バックエンド
+   uv run uvicorn app.main:app --reload
 
-Docker を使用すると、環境構築が簡単に行えます。
+   # フロントエンド
+   npm run dev
+   ```
 
-### 前提条件
+4. **Docker Compose で一体起動**
+   ```bash
+   cd 03_Implementation
+   docker compose up --build
+   ```
 
-- Docker Engine 20.10 以上
-- Docker Compose v2.0 以上
-
-### 手順
-
-```bash
-cd "${REPO}/03_Implementation"
-
-# 1. 環境変数ファイルを作成
-cp .env.example .env
-
-# 2. .env ファイルを編集（AI_API_KEY を設定）
-# AI_API_KEY="your-openai-api-key-here"
-
-# 3. Docker コンテナをビルド＆起動
-docker compose up --build -d
-
-# 4. ログを確認（オプション）
-docker compose logs -f
-```
-
-### 停止・削除
-
-```bash
-# コンテナ停止
-docker compose down
-
-# コンテナとボリュームを削除（データも削除）
-docker compose down -v
-```
-
-### アクセス
-
-| サービス | URL |
-| --- | --- |
-| フロントエンド | http://localhost:3000 |
-| バックエンドAPI | http://localhost:8000 |
-| ヘルスチェック | http://localhost:8000/health |
-| API ドキュメント | http://localhost:8000/api/openapi.json |
-
----
-
-## ローカル環境での実行（Docker を使わない場合）
-
-## 1. 事前準備
-
-| 種別 | 推奨バージョン | 備考 |
-| --- | --- | --- |
-| Python | 3.11.x | `python -V` で確認 |
-| Node.js | 18 LTS 以上 | `node -v` で確認 |
-| npm | 10 以上 | `npm -v` で確認 |
-
-※ 今回の作業環境では `pip`/`npm` が未導入だったため、以下コマンドで導入してください。
-
-```bash
-# Debian/Ubuntu 系の場合の例
-sudo apt-get update
-sudo apt-get install -y python3-pip nodejs npm
-
-# もしくは uv を利用する場合
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv pip install -e backend
-uv pip install fastapi uvicorn sqlmodel ...
-```
-
-## 2. バックエンド
-
-```bash
-cd "${REPO}/03_Implementation/backend"
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-cp env.example .env  # 必要に応じて編集
-python scripts/init_db.py
-uvicorn app.main:app --reload --port 8000
-```
-
-### 外部システムスタブ
-
-`/api/stubs/...` にモック API を用意しています。
-
-| Stub | エンドポイント | 概要 |
-| --- | --- | --- |
-| S-001（CA管理） | `GET /api/stubs/s001/notices/{ca_notice_id}` | 銘柄情報・重要日付を返却 |
-|  | `GET /api/stubs/s001/securities/{security_code}` | 銘柄マスタを返却 |
-| S-003（配信） | `POST /api/stubs/s003/distributions` | 配信キュー登録の疑似レスポンス |
-| S-004（ワークフロー） | `POST /api/stubs/s004/workflow` | 承認ステータス更新の疑似レスポンス |
-
-いずれもローカル DB を参照せず固定レスポンスを返します。  
-フロントから外部システムを想定した疎通確認を行う際に利用してください。
-
-## 3. フロントエンド
-
-```bash
-cd "${REPO}/03_Implementation/frontend"
-npm install
-cp .env.local.example .env.local # 必要に応じて作成
-npm run dev -- --port 3000
-```
-
-`NEXT_PUBLIC_API_BASE` を `.env.local` で `http://localhost:8000/api` に設定します。
-
-## 4. 動作確認
-
-1. `http://localhost:3000` を開く
-2. `CA通知取込` で CA 通知を登録
-3. `AI 入力` ページで通知を選択し AI 生成（API キー未設定でもスタブ出力で動作）
-4. `ドラフトレビュー` で修正／承認依頼
-5. `承認・配信` で承認 → 配信スタブ呼び出し
-
-バックエンドのログには監査イベントが出力され、DB（SQLite）に保存されます。
-
+5. **Celery ワーカー**
+   ```bash
+   uv run celery -A app.workers.celery_app worker -Q reporting_qa --loglevel=info
+   ```

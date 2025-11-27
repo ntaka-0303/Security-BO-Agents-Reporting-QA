@@ -1,32 +1,26 @@
-from __future__ import annotations
-
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
+from sqlalchemy.orm import Session
 
-from app import dependencies
-from app.config import settings
-from app.crud import inquiries as inquiries_crud
-from app.schemas.inquiry import InquiryCreate, InquiryListResponse, InquiryRead
+from ..dependencies import get_db
+from ..schemas import InquiryCreate, InquiryRead, InquirySummary
+from ..services import inquiry_service
 
-router = APIRouter(prefix=f"{settings.api_prefix}/inquiries", tags=["inquiries"])
-
-
-@router.get("/", response_model=InquiryListResponse)
-def list_inquiries(session: Session = Depends(dependencies.get_db)) -> InquiryListResponse:
-    items = inquiries_crud.list_inquiries(session)
-    return InquiryListResponse(items=[InquiryRead.model_validate(i) for i in items])
+router = APIRouter()
 
 
-@router.post("/", response_model=InquiryRead, status_code=status.HTTP_201_CREATED)
-def create_inquiry(payload: InquiryCreate, session: Session = Depends(dependencies.get_db)) -> InquiryRead:
-    inquiry = inquiries_crud.create_inquiry(session, payload)
-    return InquiryRead.model_validate(inquiry)
+@router.post("", response_model=InquiryRead, status_code=status.HTTP_201_CREATED)
+def create_inquiry(payload: InquiryCreate, db: Session = Depends(get_db)):
+    return inquiry_service.create_inquiry(db, payload)
+
+
+@router.get("", response_model=list[InquirySummary])
+def list_inquiries(db: Session = Depends(get_db)):
+    return inquiry_service.list_inquiries(db)
 
 
 @router.get("/{inquiry_id}", response_model=InquiryRead)
-def get_inquiry(inquiry_id: str, session: Session = Depends(dependencies.get_db)) -> InquiryRead:
-    inquiry = inquiries_crud.get_inquiry(session, inquiry_id)
-    if not inquiry:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="INQUIRY_NOT_FOUND")
-    return InquiryRead.model_validate(inquiry)
-
+def get_inquiry(inquiry_id: str, db: Session = Depends(get_db)):
+    record = inquiry_service.get_inquiry(db, inquiry_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Inquiry not found")
+    return record
