@@ -34,6 +34,7 @@ class AiResponseSummary(BaseModel):
     version_no: int
     confidence_score: float
     created_at: datetime
+    inquiry_id: str
 
     class Config:
         from_attributes = True

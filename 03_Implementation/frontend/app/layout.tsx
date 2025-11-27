@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import "./globals.css";
 import type { ReactNode } from "react";
 
@@ -17,24 +19,24 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <h1 className="text-2xl font-semibold">Reporting QA Agent</h1>
             </div>
             <nav className="flex gap-4 text-sm">
-              <a href="/" className="font-medium text-brand">
+              <Link href="/" className="font-medium text-brand">
                 ダッシュボード
-              </a>
-              <a href="/inquiries" className="text-slate-500 hover:text-brand">
+              </Link>
+              <Link href="/inquiries" className="text-slate-500 hover:text-brand">
                 INQ-001
-              </a>
-              <a href="/ai" className="text-slate-500 hover:text-brand">
+              </Link>
+              <Link href="/ai" className="text-slate-500 hover:text-brand">
                 AIN-001/002
-              </a>
-              <a href="/review" className="text-slate-500 hover:text-brand">
+              </Link>
+              <Link href="/review" className="text-slate-500 hover:text-brand">
                 OUT-001
-              </a>
-              <a href="/escalations" className="text-slate-500 hover:text-brand">
+              </Link>
+              <Link href="/escalations" className="text-slate-500 hover:text-brand">
                 ESC-001
-              </a>
-              <a href="/admin" className="text-slate-500 hover:text-brand">
+              </Link>
+              <Link href="/admin" className="text-slate-500 hover:text-brand">
                 監査
-              </a>
+              </Link>
             </nav>
           </header>
           {children}

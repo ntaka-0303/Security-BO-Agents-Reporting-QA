@@ -94,6 +94,19 @@ def enqueue_ai_generation(db: Session, payload: AiResponseCreate) -> AiResponse:
     return ai_response
 
 
+def list_ai_responses(db: Session, limit: int = 20) -> list[AiResponse]:
+    return (
+        db.query(AiResponse)
+        .order_by(AiResponse.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def get_ai_response(db: Session, ai_response_id: str) -> AiResponse | None:
+    return db.query(AiResponse).filter_by(ai_response_id=ai_response_id).first()
+
+
 def apply_operator_review(db: Session, ai_response_id: str, updates: dict[str, Any]) -> AiResponse:
     record: AiResponse | None = db.query(AiResponse).filter_by(ai_response_id=ai_response_id).first()
     if not record:
