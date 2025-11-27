@@ -1,26 +1,9 @@
-from __future__ import annotations
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from contextlib import contextmanager
+from ..config import get_settings
 
-from sqlmodel import Session, SQLModel, create_engine
+settings = get_settings()
 
-from app.config import settings
-
-engine = create_engine(settings.database_url, echo=False, connect_args={"check_same_thread": False})
-
-
-def init_db() -> None:
-    SQLModel.metadata.create_all(engine)
-
-
-@contextmanager
-def get_session():
-    session = Session(engine)
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+engine = create_engine(str(settings.database_url), pool_pre_ping=True)
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)

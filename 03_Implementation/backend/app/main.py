@@ -1,39 +1,28 @@
-from __future__ import annotations
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import settings
-from app.db.session import init_db
-from app.routers import ai, approvals, distribution, drafts, logs, notices, stubs
+from .config import get_settings
+from .db.base import Base
+from .db.session import engine
+from .routers import api_router
 
-app = FastAPI(title=settings.app_name, openapi_url=f"{settings.api_prefix}/openapi.json")
+settings = get_settings()
 
-# CORS設定（開発環境用）
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title=settings.app_name)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-@app.on_event("startup")
-async def startup_event() -> None:
-    init_db()
+@app.get("/health")
+def healthcheck():
+    return {"status": "ok"}
 
 
-@app.get("/health", tags=["system"])
-async def health_check() -> dict[str, str]:
-    return {"status": "ok", "app": settings.app_name}
-
-
-# ルーター登録
-app.include_router(notices.router)
-app.include_router(ai.router)
-app.include_router(drafts.router)
-app.include_router(approvals.router)
-app.include_router(distribution.router)
-app.include_router(logs.router)
-app.include_router(stubs.router)
+app.include_router(api_router, prefix=settings.api_prefix)

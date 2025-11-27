@@ -1,24 +1,42 @@
 [project]
-name = "ca-summary-backend"
+name = "reporting-qa-backend"
 version = "0.1.0"
-description = "PoC backend for CA summary and notification draft generation"
-authors = [{ name = "Security BO Agents" }]
+description = "Reporting QA Agent PoC backend aligned with F-001〜F-011"
+authors = ["PoC Team <poc@example.com>"]
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi>=0.115.0",
-  "uvicorn[standard]>=0.30.1",
-  "sqlmodel>=0.0.21",
-  "pydantic-settings>=2.5.2",
+  "fastapi>=0.115.2",
+  "uvicorn[standard]>=0.30.6",
+  "pydantic>=2.9.2",
+  "pydantic-settings>=2.4.0",
+  "sqlalchemy>=2.0.36",
+  "psycopg[binary]>=3.2.3",
+  "alembic>=1.13.3",
+  "celery>=5.4.0",
+  "redis>=5.1.1",
+  "langchain>=0.3.5",
+  "openai>=1.52.0",
   "python-multipart>=0.0.9",
-  "httpx>=0.27.0"
+  "python-dotenv>=1.0.1",
+  "orjson>=3.10.7",
+  "tenacity>=9.0.0",
+  "httpx>=0.27.2",
+  "jinja2>=3.1.4"
 ]
 
 [project.optional-dependencies]
 dev = [
-  "black>=24.8.0",
-  "ruff>=0.6.8"
+  "pytest>=8.3.3",
+  "pytest-asyncio>=0.24.0",
+  "ruff>=0.6.9"
 ]
 
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+[tool.uv]
+index-url = "https://pypi.org/simple"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "A"]

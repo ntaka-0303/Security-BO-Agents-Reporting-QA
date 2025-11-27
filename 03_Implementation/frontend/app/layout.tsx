@@ -1,22 +1,45 @@
-import type { Metadata } from "next";
-import "antd/dist/reset.css";
 import "./globals.css";
-import { AntdProvider } from "./providers";
+import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
-  title: "CA Summary Control Tower",
-  description: "CA通知の要約・レビュー・配信を一元管理する PoC UI",
+export const metadata = {
+  title: "Reporting QA Agent",
+  description: "帳票問い合わせ対応のPoC UI"
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
-      <body>
-        <AntdProvider>
-          <div className="app-shell">{children}</div>
-        </AntdProvider>
+      <body className="bg-slate-50 text-slate-900">
+        <div className="mx-auto max-w-6xl py-8">
+          <header className="mb-8 flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-500">PoC Environment</p>
+              <h1 className="text-2xl font-semibold">Reporting QA Agent</h1>
+            </div>
+            <nav className="flex gap-4 text-sm">
+              <a href="/" className="font-medium text-brand">
+                ダッシュボード
+              </a>
+              <a href="/inquiries" className="text-slate-500 hover:text-brand">
+                INQ-001
+              </a>
+              <a href="/ai" className="text-slate-500 hover:text-brand">
+                AIN-001/002
+              </a>
+              <a href="/review" className="text-slate-500 hover:text-brand">
+                OUT-001
+              </a>
+              <a href="/escalations" className="text-slate-500 hover:text-brand">
+                ESC-001
+              </a>
+              <a href="/admin" className="text-slate-500 hover:text-brand">
+                監査
+              </a>
+            </nav>
+          </header>
+          {children}
+        </div>
       </body>
     </html>
   );
 }
-
